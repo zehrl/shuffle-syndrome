@@ -3,30 +3,31 @@
 import styles from './page.module.css'
 import { useEffect, useState } from 'react';
 
+const getRecommendations = () => {
+
+}
+
 export default function Home() {
     const [token, setToken] = useState("");
 
     useEffect(() => {
-        console.log('useEffect start...')
         if (!token) {
-            console.log('->no token found')
-            fetch('http://localhost:3000/api/token')
-                .then((response) => {
-                    return response.json();
+            fetch('http://localhost:3000/api/token', { method: "POST" })
+                .then((res) => res.json())
+                .then(({resJson}) => {
+                    setToken(resJson.access_token);
+                    return;
                 })
-                .then((tokenJson) => {
-                    console.log('->token json: ', tokenJson)
-                    setToken(tokenJson.id);
-                });
         }
     }, [token])
 
     let bpm = 128;
     return (
-        <main style={{ padding: '0.6em' }}>
+        <main style={{ padding: '4.6em' }}>
             <h1>Shuffle Syndrome</h1>
             <p>BPM {bpm}</p>
             <p>token: {token ? token : 'loading...'}</p>
+            {token && <button onClick={getRecommendations()}>Start</button>}
         </main>
     )
 }

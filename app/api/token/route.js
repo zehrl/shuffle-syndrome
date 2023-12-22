@@ -1,27 +1,21 @@
 export const dynamic = 'force-dynamic' // defaults to force-static
 
-export async function GET() {
-    // const { searchParams } = new URL(request.url)
-    // const id = searchParams.get('id')
-    
-    // const res = await fetch(`https://accounts.spotify.com/api/token`, {
-    //   headers: {
-    //     'Content-Type': 'application/x-www-form-urlencoded',
-    //     'API-Key': process.env.DATA_API_KEY,
-    //   },
-    //   options: {
-    //     method: "GET"
-    //   }
-    // })
-    // const product = await res.json()
-   
-    // return Response.json({ product })
+export async function POST() {
 
-    // const res = await fetch('https://google.com', {
-    //     method: "GET" 
-    // });
+    const client_id = process.env.SPOTIFY_CLIENT_ID;
+    const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
 
-    // const resJson = await res.json();
+    const res = await fetch(`https://accounts.spotify.com/api/token`, {
+        headers: {
+            'Authorization': 'Basic ' + (new Buffer.from(client_id + ':' + client_secret).toString('base64')),
+            'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: "grant_type=client_credentials",
+        method: 'POST'
+    }).then((response) => {
+        return response;
+    })
 
-    return Response.json({id: "192048"});
-  }
+    const resJson = await res.json();
+    return Response.json({ resJson });
+}
