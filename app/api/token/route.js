@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic' // defaults to force-static
 
-export async function POST() {
+export async function GET() {
 
     const client_id = process.env.SPOTIFY_CLIENT_ID;
     const client_secret = process.env.SPOTIFY_CLIENT_SECRET;
@@ -16,6 +16,7 @@ export async function POST() {
         return response;
     })
 
+    // console.log('token res: ', res);
     const resJson = await res.json();
     return Response.json({ resJson });
 }
