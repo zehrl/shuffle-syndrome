@@ -34,7 +34,7 @@ export default function Home() {
             .then(({ resJson }) => {
                 console.log('resJson: ', resJson)
                 let trackListEl = resJson.tracks.map(trackJson => {
-                    return <li>{trackJson.name}</li>
+                    return <li key={trackJson.id}>{trackJson.name}</li>
                 })
                 console.log(trackListEl);
                 setTrackList(trackListEl);
