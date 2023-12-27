@@ -5,11 +5,12 @@ import { useEffect, useState } from 'react';
 
 export default function Home() {
     const [token, setToken] = useState("");
+    const [bpm, setBpm] = useState("129");
     const [trackList, setTrackList] = useState();
 
     useEffect(() => {
         if (!token) {
-            console.log("no token found: ", token);
+            console.log("fetching new token...");
             fetch('http://localhost:3000/api/token', { method: "GET" })
                 .then((res) => res.json())
                 .then(({ resJson }) => {
@@ -22,28 +23,37 @@ export default function Home() {
     const getRecommendations = () => {
         const formData = new FormData();
         formData.append('token', token);
+        formData.append('bpm', bpm);
 
         const request = new Request('http://localhost:3000/api/recommendations',
-        {
-            method: 'POST',
-            body: formData,
-        });
-        
+            {
+                method: 'POST',
+                body: formData,
+            });
+
         fetch(request)
             .then((res) => res.json())
             .then(({ resJson }) => {
                 console.log('resJson: ', resJson)
                 let trackListEl = resJson.tracks.map(trackJson => {
-                    return <li key={trackJson.id}>{trackJson.name}</li>
+                    const artistNames = trackJson.artists.map((artist) => {
+                        return artist.name
+                    }).join(' & ')
+
+                    return <li key={trackJson.id}>{artistNames} - {trackJson.name}<audio controls><source src={trackJson.preview_url} /></audio></li>
                 })
+
                 console.log(trackListEl);
                 setTrackList(trackListEl);
                 return;
             })
-            .catch(()=>console.log('Error fetching recommendations'))
+            .catch((err) => {
+                console.log('Error fetching recommendations: ', err)
+                console.log('Clearing token...');
+                setToken(null);
+            })
     }
 
-    let bpm = 128;
     return (
         <main style={{ padding: '4.6em' }}>
             <h1>Shuffle Syndrome</h1>

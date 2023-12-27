@@ -1,11 +1,14 @@
 export const dynamic = 'force-dynamic' // defaults to force-static
 
 export async function POST(request) {
+    let token;
+    let bpm;
+
 
     // console.log("request: ", request);
-    const token = await request.formData().then((data) => {
-        console.log(data.get('token'));
-        return data.get('token');
+    await request.formData().then((data) => {
+        token = data.get('token');
+        bpm = data.get('bpm');
     })
 
     const spotifyHeaders = new Headers();
@@ -13,7 +16,7 @@ export async function POST(request) {
 
     console.log("spotifyHeaders: ", spotifyHeaders);
 
-    const spotifyRequest = new Request('https://api.spotify.com/v1/recommendations?seed_genres=dance&target_tempo=128', {
+    const spotifyRequest = new Request(`https://api.spotify.com/v1/recommendations?seed_genres=dance&target_tempo=${bpm}`, {
         headers: spotifyHeaders
     });
 
