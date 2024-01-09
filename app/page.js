@@ -20,18 +20,15 @@ export default function Home() {
         }
     }, [token])
 
-    const getRecommendations = () => {
-        const formData = new FormData();
+    async function onSubmit(event) {
+        event.preventDefault()
+
+        const formData = new FormData(event.target)
         formData.append('token', token);
-        formData.append('bpm', bpm);
-
-        const request = new Request('http://localhost:3000/api/recommendations',
-            {
-                method: 'POST',
-                body: formData,
-            });
-
-        fetch(request)
+        const response = await fetch('/api/recommendations', {
+            method: 'POST',
+            body: formData,
+        })
             .then((res) => res.json())
             .then(({ resJson }) => {
                 console.log('resJson: ', resJson)
@@ -54,14 +51,16 @@ export default function Home() {
             })
     }
 
+
     return (
         <main style={{ padding: '4.6em' }}>
             <h1>Shuffle Syndrome</h1>
-            <p>BPM {bpm}</p>
+            <form onSubmit={onSubmit}>
+                <input type="text" name="bpm" />
+                <button type="submit" disabled={!token}>Set</button>
+            </form>
             <p>token: {token ? token : 'loading...'}</p>
-            {token && <button onClick={getRecommendations}>Start</button>}
             {trackList && <ul>{trackList}</ul>}
-
         </main>
     )
 }
